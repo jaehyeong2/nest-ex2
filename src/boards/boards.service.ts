@@ -13,6 +13,10 @@ export class BoardsService {
         private boardRepository: BoardRepository,
     ){}
 
+    async getAllBoards(): Promise<Board[]>{
+        return this.boardRepository.find();
+    }
+
      createBoard(createBoardDto: CreateBoardDto): Promise <Board>{
         return this.boardRepository.createBoard(createBoardDto);
     }
@@ -28,39 +32,23 @@ export class BoardsService {
     }
 
 
-    // getAllBoards(): Board[] {
-    //     return this.boards;
-    // }
+    async deleteBoard(id:number): Promise <void> {
+        const result = await this.boardRepository.delete(id);
 
-    // createBoard(createBoatdDto : CreateBoardDto) {
-    //     const { title, description } = createBoatdDto;
-    //     const board: Board = {
-    //         id: uuid,
-    //         title, 
-    //         description,
-    //         status: BoardStatus.PUBLIC
-    //     }
+        if(result.affected === 0){
+            throw new NotFoundException(`cant find board with id ${id}`);
+        }
 
-    //     this.boards.push(board);
-    //     return board;
-    // }
-    // getBoardById(id: string) : Board {
-    //     const found = this.boards.find((board) => board.id === id );
 
-    //     if(found) {
-    //         throw new NotFoundException(`can't find board id : ${id}`);
-    //     } 
-    //     return found;
-    // }
-    
-    // deleteBoardById(id: string) : void {
-    //     const found = this.getBoardById(id);
-    //     this.boards = this.boards.filter((board) => board.id !==found.id );
-    // }
+    }
+  
+    async updateBoardService(id: number, status: BoardStatus): Promise<Board> {
+        const board = await this.getBoardById(id);
 
-    // updateBoardStatus(id: string, status: BoardStatus ): Board {
-    //     const board = this.getBoardById(id);
-    //     board.status = status;
-    //     return board;
-    // }
+        board.status = status;
+        await this.boardRepository.save(board);
+
+        return board;
+    }
+
 }
