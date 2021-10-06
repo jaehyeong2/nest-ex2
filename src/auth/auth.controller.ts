@@ -12,7 +12,7 @@ export class AuthController {
     }
 
     @Post('/signin')
-    signIn(@Body(ValidationPipe) authCredentailsDto: AuthCredentialsDto) {
+    signIn(@Body(ValidationPipe) authCredentailsDto: AuthCredentialsDto) : Promise<{accessToken : string}> {
         return this.authService.signIn(authCredentailsDto);
     }
 }
